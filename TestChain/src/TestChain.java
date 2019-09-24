@@ -1,18 +1,23 @@
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.*;
+import java.util.Base64;
 
 public class TestChain {
 
 	private List<Block> chain;
 	public static int difficulty = 2;
+	public static Wallet walletA;
+	public static Wallet walletB;
+	
 	public TestChain()
 	{
 		this.chain = new ArrayList<Block>();
 		chain.add(generateGenesis());
 		
 	}
-	/*
+	/**
 	 * generates the genesis block(first block)
 	 */
 	private Block generateGenesis()
@@ -20,7 +25,10 @@ public class TestChain {
 		Block genesis = new Block("genesisBlock", new java.util.Date());
 		return genesis;
 	}
-	
+	/**
+	 * adds a new block to the blockchain
+	 * @param blk - previous block
+	 */
 	public void addBlock(Block blk)
 	{
 		Block newBlock = blk;
@@ -29,7 +37,7 @@ public class TestChain {
 		chain.add(newBlock);
 	}
 	
-	/*
+	/**
 	 * displays the chain
 	 */
 	public void displayChain()
@@ -43,6 +51,9 @@ public class TestChain {
 
 		}
 	}
+	/**
+	 * displays the blockchain with Json library
+	 */
 	public void displayChainWithJson()
 	{
 		String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(chain);		
@@ -52,7 +63,11 @@ public class TestChain {
 	{
 		return this.chain.get(chain.size()-1);
 	}
-	
+	/**
+	 *  Checks if the blockchain is valid. 
+	 *  
+	 * @return true if valid false if not valid.
+	 */
 	public boolean isValid()
 	{
 		Block currentBlock; 
@@ -62,7 +77,7 @@ public class TestChain {
 		{
 			currentBlock = chain.get(i);
 			nextBlock = chain.get(i+1);
-			////compare registered hash and calculated hash:
+			//compare registered hash and calculated hash:
 			if( !currentBlock.hash.equals(currentBlock.calculateHash()))
 			{
 				System.out.println("Current Hashes are not equal, chain is not valid!");
@@ -106,7 +121,19 @@ public class TestChain {
 		System.out.println(chain.isValid());
 		//chain.displayChain();
 		chain.displayChainWithJson();
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		walletA = new Wallet();
+		walletB = new Wallet();
 		
+		System.out.println("Private and public keys:");
+		System.out.println(StringUtil.getStringFromKey(walletA.getPublicKey()));
+		System.out.println(StringUtil.getStringFromKey(walletA.getPrivateKey()));
+		
+		Transaction transaction = new Transaction(walletA.getPublicKey(), walletB.getPublicKey(), 5 , null);
+		transaction.generatSignatureKey(walletA.getPrivateKey());
+		System.out.println("Is signature verified");
+		System.out.println(transaction.verifiySignature());
 		
 	}
 }
+

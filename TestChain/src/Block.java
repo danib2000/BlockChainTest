@@ -9,7 +9,8 @@ public class Block {
 	private int nonce;
 	
 
-	/*
+	/**
+	 * 
 	 * //Block Constructor.
 	 */
 	public Block(String data, Date timestamp) {
@@ -20,7 +21,7 @@ public class Block {
 		this.nonce=0;
 	}
 	
-	/*
+	/**
 	 * A function to calculate the hash from the data of the block
 	 */
 	public String calculateHash() {
@@ -33,7 +34,7 @@ public class Block {
 		return calculatedhash;
 	}
 	
-	/*
+	/**
 	 * A function to mine blocks
 	 */
 	public void mineBlock(int difficulty)
